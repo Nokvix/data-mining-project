@@ -18,11 +18,7 @@ def get_url() -> None:
         cards = soup.find_all(class_='ListingItemTitle__link')
         urls = [block.get('href') for block in cards]
         write_urls_to_file(urls)
-<<<<<<< HEAD
-        # print(f'{page}/99')
-=======
-        print(f'{page}/99')
->>>>>>> origin/main
+        # print(f'{page}/99')n
 
 
 def main():
