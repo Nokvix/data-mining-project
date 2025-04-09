@@ -33,8 +33,8 @@ def create_driver():
     return driver
 
 
-def find_object(driver, search_by: str, value: str, many: bool = False) -> WebElement | List[WebElement]:
-    WebDriverWait(driver, 10).until(
+def find_object(driver, search_by: str, value: str, timeout: int = 5, many: bool = False) -> WebElement | List[WebElement]:
+    WebDriverWait(driver, timeout).until(
         expected_conditions.element_to_be_clickable((search_by, value))
     )
     if many:
