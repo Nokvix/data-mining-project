@@ -13,9 +13,9 @@ def get_bs4(num: int) -> BeautifulSoup:
     return BeautifulSoup(src, 'lxml')
 
 
-def transform_odometer(odometer: str) -> int:
+def transform_to_number(string: str) -> int:
     number = []
-    for char in odometer:
+    for char in string:
         if char.isdigit():
             number.append(char)
 
@@ -37,7 +37,7 @@ def get_small_characteristics(soup: BeautifulSoup) -> Dict[str, str | int]:
 
     # Километраж
     odometer = card_info_ul.find(class_='CardInfoRow_kmAge').find_all('div')[-1].text
-    small_characteristics['Odometer'] = transform_odometer(odometer)
+    small_characteristics['Odometer'] = transform_to_number(odometer)
 
     # Тип машины (седан, джип ...)
     small_characteristics['CarType'] = card_info_ul.find(class_='CardInfoRow_bodytype').find_all('div')[-1].find(
@@ -192,6 +192,17 @@ def write_to_csv(all_car_characteristics: List[Dict[str, int | str | float]]) ->
             writer.writerow(values)
 
 
+def get_price(soup: BeautifulSoup, characteristics: Dict[str, int | str | float]) -> Dict[str, int | str | float]:
+    price = soup.find(class_='OfferPriceCaption__price')
+    if price is not None:
+        price = transform_to_number(price.text)
+
+    characteristics['Price'] = price
+    return characteristics
+    
+
+
+
 def main():
     all_car_characteristics = []
     for num in range(1, 3725):
@@ -201,6 +212,7 @@ def main():
             soup = get_bs4(num)
             characteristics = get_small_characteristics(soup)
             characteristics = get_full_characteristics(soup, characteristics)
+            characteristics = get_price(soup, characteristics)
             all_car_characteristics.append(characteristics)
             # pprint(characteristics)
 
